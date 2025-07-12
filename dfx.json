@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "zero-proof-pw-manager-backend": {
+      "main": "src/zero-proof-pw-manager-backend/main.mo",
+      "type": "motoko"
+    },
+    "zero-proof-pw-manager-frontend": {
+      "dependencies": [
+        "zero-proof-pw-manager-backend"
+      ],
+      "source": [
+        "src/zero-proof-pw-manager-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "zero-proof-pw-manager-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
