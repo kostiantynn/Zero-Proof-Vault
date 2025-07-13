@@ -203,68 +203,84 @@ export default function ManageVault() {
           
           {/* Left Column - Add Entry & Import */}
           <div className="flex flex-column">
-            {/* Combined Add Entry & Import Section */}
-            <div className="card">
-              <h3>➕ Add New Entry</h3>
-              <div className="form-group">
-                <label className="form-label">Website URL</label>
-                <input 
-                  className="form-input" 
-                  placeholder="https://example.com" 
-                  value={newEntry.url} 
-                  onChange={(e) => setNewEntry({ ...newEntry, url: e.target.value })} 
-                />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Username</label>
-                <input 
-                  className="form-input" 
-                  placeholder="your@email.com" 
-                  value={newEntry.username} 
-                  onChange={(e) => setNewEntry({ ...newEntry, username: e.target.value })} 
-                />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Password</label>
-                <input 
-                  className="form-input" 
-                  type="password" 
-                  placeholder="Enter password" 
-                  value={newEntry.password} 
-                  onChange={(e) => setNewEntry({ ...newEntry, password: e.target.value })} 
-                />
-              </div>
-              <button 
-                className="btn" 
-                onClick={handleAdd}
-                disabled={addingEntry}
-              >
-                {addingEntry ? (
-                  <>
-                    <span className="loading"></span>
-                    Adding...
-                  </>
-                ) : (
-                  'Add Entry'
-                )}
-              </button>
+            /* Combined Add Entry & Import Section */}
+                  <div className="card">
+                    <h3>➕ Add New Entry</h3>
+                    <div className="form-group">
+                    <label className="form-label">Website URL</label>
+                    <input 
+                      className="form-input" 
+                      placeholder="https://example.com" 
+                      value={newEntry.url} 
+                      onChange={(e) => setNewEntry({ ...newEntry, url: e.target.value })} 
+                    />
+                    </div>
+                    <div className="form-group">
+                    <label className="form-label">Username</label>
+                    <input 
+                      className="form-input" 
+                      placeholder="your@email.com" 
+                      value={newEntry.username} 
+                      onChange={(e) => setNewEntry({ ...newEntry, username: e.target.value })} 
+                    />
+                    </div>
+                    <div className="form-group">
+                    <label className="form-label">Password</label>
+                    <div className="flex gap-10 flex-mobile-column">
+                      <input 
+                      className="form-input" 
+                      type="password" 
+                      placeholder="Enter password" 
+                      value={newEntry.password} 
+                      onChange={(e) => setNewEntry({ ...newEntry, password: e.target.value })} 
+                      />
+                      <button 
+                      className="btn btn-secondary" 
+                      style={{ 
+                        padding: '12px 16px', 
+                        minWidth: 'auto'
+                      }}
+                      onClick={() => {
+                        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+                        const randomPassword = Array.from({length: 16}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+                        setNewEntry({ ...newEntry, password: randomPassword });
+                      }}
+                      >
+                      🎲 Generate
+                      </button>
+                    </div>
+                    </div>
+                    <button 
+                    className="btn" 
+                    onClick={handleAdd}
+                    disabled={addingEntry}
+                    >
+                    {addingEntry ? (
+                      <>
+                      <span className="loading"></span>
+                      Adding...
+                      </>
+                    ) : (
+                      'Add Entry'
+                    )}
+                    </button>
 
-              <hr style={{ 
-                margin: '30px 0', 
-                border: 'none', 
-                height: '1px', 
-                background: 'var(--card-border)' 
-              }} />
+                    <hr style={{ 
+                    margin: '30px 0', 
+                    border: 'none', 
+                    height: '1px', 
+                    background: 'var(--card-border)' 
+                    }} />
 
-              <h3>📁 Import from CSV</h3>
-              <p className="mb-20">
-                Import your passwords from a CSV file
-              </p>
-              <LoadCSV onImportEntries={handleAllEntries} onImportEntry={handleImportEntry} />
-            </div>
-          </div>
+                    <h3>📁 Import from CSV</h3>
+                    <p className="mb-20">
+                    Import your passwords from a CSV file
+                    </p>
+                    <LoadCSV onImportEntries={handleAllEntries} onImportEntry={handleImportEntry} />
+                  </div>
+                  </div>
 
-          {/* Right Column - Password List */}
+                  {/* Right Column - Password List */}
           <div className="flex flex-column">
             {/* Search and Actions Header */}
             <div className="card mb-20" style={{ marginBottom: '30px' }}>
