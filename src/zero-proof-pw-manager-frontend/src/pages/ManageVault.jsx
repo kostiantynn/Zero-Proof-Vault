@@ -203,7 +203,7 @@ export default function ManageVault() {
           
           {/* Left Column - Add Entry & Import */}
           <div className="flex flex-column">
-            /* Combined Add Entry & Import Section */}
+            {/* Combined Add Entry & Import Section */}
                   <div className="card">
                     <h3>➕ Add New Entry</h3>
                     <div className="form-group">
