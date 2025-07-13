@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zero_proof_pw_manager_backend } from "../../../declarations/zero-proof-pw-manager-backend";
 import { decryptMetaBlob, decryptPasswordBlob, deriveVaultKey, encryptMetaBlob, encryptPasswordBlob } from "../utility/encdcrpt";
+import LoadCSV from "../components/LoadCSV";
 
 export default function ManageVault() {
   const [loading, setLoading] = useState(true);
@@ -54,7 +55,7 @@ export default function ManageVault() {
   const [newEntry, setNewEntry] = useState({ url: "", username: "", password: "" });
 
   const handleAdd = async () => {
-    // Placeholders — you’ll replace with actual encryption
+    // Placeholders — you'll replace with actual encryption
     const encryptedBlob = await encryptMetaBlob(newEntry.url, newEntry.username, signedKey);
     const encryptedPW = await encryptPasswordBlob(newEntry.password, signedKey);
     console.log("encryptedBlob", typeof encryptedBlob, encryptedBlob);
@@ -64,11 +65,21 @@ export default function ManageVault() {
     setNewEntry({ url: "", username: "", password: "" });
   };
 
+  const handleImportEntry = async (entry) => {
+    // Use the existing handleAdd logic for CSV imported entries
+    const encryptedBlob = await encryptMetaBlob(entry.url, entry.username, signedKey);
+    const encryptedPW = await encryptPasswordBlob(entry.password, signedKey);
+    await zero_proof_pw_manager_backend.addEntry(encryptedBlob, encryptedPW);
+    setBlobs((prev) => [...prev, { blob: encryptedBlob, url: entry.url, username: entry.username }]);
+  };
+
   if (loading) return <p>Loading...</p>;
 
   return (
     <div style={{ padding: 24 }}>
       <h2>Your Vault</h2>
+
+      <LoadCSV onImportEntry={handleImportEntry} />
 
       <div style={{ marginBottom: 32 }}>
         <h4>Add New Entry</h4>
