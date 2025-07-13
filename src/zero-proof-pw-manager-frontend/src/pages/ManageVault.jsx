@@ -183,7 +183,8 @@ export default function ManageVault() {
 
   return (
     <div className="flex-center flex-column">
-      <div className="card">
+      <div className="card" style={{ maxWidth: '1400px', width: '100%' }}>
+        {/* Header Section */}
         <div className="flex-between mb-30">
           <h1>🔐 Password Vault</h1>
           <button
@@ -194,170 +195,196 @@ export default function ManageVault() {
           </button>
         </div>
 
-        <div className="grid grid-2 gap-30">
-          {/* Add New Entry Section */}
-          <div className="card">
-            <h3>➕ Add New Entry</h3>
-            <div className="form-group">
-              <label className="form-label">Website URL</label>
-              <input
-                className="form-input"
-                placeholder="https://example.com"
-                value={newEntry.url}
-                onChange={(e) => setNewEntry({ ...newEntry, url: e.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Username</label>
-              <input
-                className="form-input"
-                placeholder="your@email.com"
-                value={newEntry.username}
-                onChange={(e) => setNewEntry({ ...newEntry, username: e.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Password</label>
-              <input
-                className="form-input"
-                type="password"
-                placeholder="Enter password"
-                value={newEntry.password}
-                onChange={(e) => setNewEntry({ ...newEntry, password: e.target.value })}
-              />
-            </div>
-            <button
-              className="btn"
-              onClick={handleAdd}
-              disabled={addingEntry}
-            >
-              {addingEntry ? (
-                <>
-                  <span className="loading"></span>
-                  Adding...
-                </>
-              ) : (
-                'Add Entry'
-              )}
-            </button>
-          </div>
-
-          {/* Import CSV Section */}
-          <div className="card">
-            <h3>📁 Import from CSV</h3>
-            <p className="mb-20">
-              Import your passwords from a CSV file
-            </p>
-            <LoadCSV onImportEntries={handleAllEntries} onImportEntry={handleImportEntry} />
-          </div>
-        </div>
-
-        {/* Vault Entries */}
-        <div className="card mt-30">
-          <div className="flex-between mb-20">
-            <h3>🔒 Your Passwords ({blobs.length})</h3>
-            {blobs.length > 0 && (
-              <button
-                className="btn btn-secondary"
-                onClick={dropAll}
-                disabled={clearingVault}
+        {/* Main Grid Layout */}
+        <div className="grid" style={{ 
+          gridTemplateColumns: '1fr 1fr', 
+          gap: '30px'
+        }}>
+          
+          {/* Left Column - Add Entry & Import */}
+          <div className="flex flex-column">
+            {/* Combined Add Entry & Import Section */}
+            <div className="card">
+              <h3>➕ Add New Entry</h3>
+              <div className="form-group">
+                <label className="form-label">Website URL</label>
+                <input 
+                  className="form-input" 
+                  placeholder="https://example.com" 
+                  value={newEntry.url} 
+                  onChange={(e) => setNewEntry({ ...newEntry, url: e.target.value })} 
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Username</label>
+                <input 
+                  className="form-input" 
+                  placeholder="your@email.com" 
+                  value={newEntry.username} 
+                  onChange={(e) => setNewEntry({ ...newEntry, username: e.target.value })} 
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Password</label>
+                <input 
+                  className="form-input" 
+                  type="password" 
+                  placeholder="Enter password" 
+                  value={newEntry.password} 
+                  onChange={(e) => setNewEntry({ ...newEntry, password: e.target.value })} 
+                />
+              </div>
+              <button 
+                className="btn" 
+                onClick={handleAdd}
+                disabled={addingEntry}
               >
-                {clearingVault ? (
+                {addingEntry ? (
                   <>
                     <span className="loading"></span>
-                    Clearing...
+                    Adding...
                   </>
                 ) : (
-                  '🗑️ Clear All'
+                  'Add Entry'
                 )}
               </button>
-            )}
+
+              <hr style={{ 
+                margin: '30px 0', 
+                border: 'none', 
+                height: '1px', 
+                background: 'var(--card-border)' 
+              }} />
+
+              <h3>📁 Import from CSV</h3>
+              <p className="mb-20">
+                Import your passwords from a CSV file
+              </p>
+              <LoadCSV onImportEntries={handleAllEntries} onImportEntry={handleImportEntry} />
+            </div>
           </div>
 
-          {/* Search Bar */}
-          {blobs.length > 0 && (
-            <div className="form-group mb-20">
-              <label className="form-label">🔍 Search Passwords</label>
-              <input
-                className="form-input"
-                placeholder="Search by website URL or username..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              {searchTerm && (
-                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '5px' }}>
-                  Found {filteredBlobs.length} of {blobs.length} entries
-                </p>
+          {/* Right Column - Password List */}
+          <div className="flex flex-column">
+            {/* Search and Actions Header */}
+            <div className="card mb-20" style={{ marginBottom: '30px' }}>
+              <div className="flex-between mb-20 flex-mobile-column">
+                <h3>🔒 Your Passwords ({blobs.length})</h3>
+                {blobs.length > 0 && (
+                  <button 
+                    className="btn btn-secondary" 
+                    onClick={dropAll}
+                    disabled={clearingVault}
+                  >
+                    {clearingVault ? (
+                      <>
+                        <span className="loading"></span>
+                        Clearing...
+                      </>
+                    ) : (
+                      '🗑️ Clear All'
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* Search Bar */}
+              {blobs.length > 0 && (
+                <div className="form-group">
+                  <label className="form-label">🔍 Search Passwords</label>
+                  <input 
+                    className="form-input" 
+                    placeholder="Search by website URL or username..." 
+                    value={searchTerm} 
+                    onChange={(e) => setSearchTerm(e.target.value)} 
+                  />
+                  {searchTerm && (
+                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '5px' }}>
+                      Found {filteredBlobs.length} of {blobs.length} entries
+                    </p>
+                  )}
+                </div>
               )}
             </div>
-          )}
 
-          {blobs.length === 0 ? (
-            <div className="text-center">
-              <p>No password entries found.</p>
-              <p>Add your first entry above to get started!</p>
-            </div>
-          ) : filteredBlobs.length === 0 && searchTerm ? (
-            <div className="text-center">
-              <p>No entries match your search: "{searchTerm}"</p>
-              <button
-                className="btn btn-secondary"
-                onClick={() => setSearchTerm('')}
-                style={{ marginTop: '10px' }}
-              >
-                Clear Search
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-2 gap-20">
-              {filteredBlobs.map(({ blob, url, username }) => (
-                <div key={blob} className="card" style={{ padding: '20px' }}>
-                  <div className="flex-between mb-10">
-                    <h4 style={{ margin: 0 }}>🌐 {url}</h4>
-                    <button
-                      className="btn btn-secondary"
-                      style={{ padding: '8px 12px', fontSize: '12px' }}
-                      onClick={() => deleteEntry(blob)}
-                      disabled={deletingEntry === blob}
-                    >
-                      {deletingEntry === blob ? (
-                        <span className="loading"></span>
-                      ) : (
-                        '🗑️'
-                      )}
-                    </button>
-                  </div>
-                  <p><strong>👤 Username:</strong> {username}</p>
-                  <div className="form-group">
-                    <label className="form-label">🔑 Password</label>
-                    <div className="flex gap-10">
-                      <input
-                        className="form-input"
-                        type={passwords[blob] ? "text" : "password"}
-                        value={passwords[blob] || ''}
-                        readOnly
-                        placeholder="Click 'Show' to reveal"
-                      />
-                      <button
-                        className="btn"
-                        style={{ padding: '12px 16px', minWidth: 'auto' }}
-                        onClick={() => passwords[blob] ? hidePassword(blob) : revealPassword(blob)}
-                        disabled={revealingPassword === blob}
+            {/* Password Entries Grid */}
+            {blobs.length === 0 ? (
+              <div className="card text-center">
+                <p>No password entries found.</p>
+                <p>Add your first entry above to get started!</p>
+              </div>
+            ) : filteredBlobs.length === 0 && searchTerm ? (
+              <div className="card text-center">
+                <p>No entries match your search: "{searchTerm}"</p>
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={() => setSearchTerm('')}
+                  style={{ marginTop: '10px' }}
+                >
+                  Clear Search
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-2 gap-20 grid-mobile-single">
+                {filteredBlobs.map(({ blob, url, username }) => (
+                  <div key={blob} className="card" style={{ padding: '20px', position: 'relative' }}>
+                    <div className="flex-between mb-10 flex-mobile-column">
+                      <div style={{ flex: 1, marginRight: '10px' }}>
+                        <h4 style={{ margin: 0 }} className="text-mobile-break">🌐 {url}</h4>
+                      </div>
+                      <button 
+                        className="btn btn-secondary" 
+                        style={{ 
+                          padding: '8px 12px', 
+                          fontSize: '12px',
+                          flexShrink: 0,
+                          minWidth: 'fit-content'
+                        }}
+                        onClick={() => deleteEntry(blob)}
+                        disabled={deletingEntry === blob}
                       >
-                        {revealingPassword === blob ? (
+                        {deletingEntry === blob ? (
                           <span className="loading"></span>
-                        ) : passwords[blob] ? (
-                          '👁️ Hide'
                         ) : (
-                          '👁️ Show'
+                          '🗑️ Delete'
                         )}
                       </button>
                     </div>
+                    <p className="text-mobile-break"><strong>👤 Username:</strong> {username}</p>
+                    <div className="form-group">
+                      <label className="form-label">🔑 Password</label>
+                      <div className="flex gap-10 flex-mobile-column">
+                        <input 
+                          className="form-input" 
+                          type={passwords[blob] ? "text" : "password"} 
+                          value={passwords[blob] || ''} 
+                          readOnly 
+                          placeholder="Click 'Show' to reveal"
+                        />
+                        <button 
+                          className="btn btn-mobile-full" 
+                          style={{ 
+                            padding: '12px 16px', 
+                            minWidth: 'auto'
+                          }}
+                          onClick={() => passwords[blob] ? hidePassword(blob) : revealPassword(blob)}
+                          disabled={revealingPassword === blob}
+                        >
+                          {revealingPassword === blob ? (
+                            <span className="loading"></span>
+                          ) : passwords[blob] ? (
+                            '👁️ Hide'
+                          ) : (
+                            '👁️ Show'
+                          )}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

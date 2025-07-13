@@ -153,10 +153,14 @@ export default function LoadCSV({ onImportEntries, onImportEntry }) {
           onClick={handleImport}
           disabled={!file}
           style={{ 
-            padding: '8px 16px', 
+            padding: '12px 16px', 
             minWidth: 'auto',
             opacity: file ? 1 : 0.5,
-            cursor: file ? 'pointer' : 'not-allowed'
+            cursor: file ? 'pointer' : 'not-allowed',
+            background: file ? 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)' : 'rgba(0, 242, 254, 0.1)',
+            color: file ? 'var(--darker-bg)' : 'var(--text-secondary)',
+            border: file ? 'none' : '1px solid rgba(0, 242, 254, 0.3)',
+            boxShadow: file ? '0 4px 15px rgba(0, 242, 254, 0.3)' : 'none'
           }}
         >
           📥 Import CSV
