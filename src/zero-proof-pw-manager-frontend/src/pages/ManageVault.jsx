@@ -52,6 +52,13 @@ export default function ManageVault() {
     setBlobs(blobs);
   };
 
+  const dropAll = async () => {
+    const result = await zero_proof_pw_manager_backend.dropStorage();
+    console.log("drop result", result);
+    setBlobs([]);
+    setPasswords({});
+  };
+
   const [newEntry, setNewEntry] = useState({ url: "", username: "", password: "" });
 
   const handleAdd = async () => {
@@ -91,10 +98,12 @@ export default function ManageVault() {
 
       <div>
         {blobs.length === 0 ? <p>No entries found.</p> : (
-          <table border="1" cellPadding="8">
-            <thead>
-              <tr>
-                <th>Encrypted Blob (URL + Username)</th>
+          <>
+            <button onClick={dropAll}>Clear Vault</button>
+            <table border="1" cellPadding="8">
+              <thead>
+                <tr>
+                  <th>Encrypted Blob (URL + Username)</th>
                 <th>Password</th>
                 <th>Actions</th>
               </tr>
@@ -112,6 +121,7 @@ export default function ManageVault() {
               ))}
             </tbody>
           </table>
+          </>
         )}
       </div>
     </div>
