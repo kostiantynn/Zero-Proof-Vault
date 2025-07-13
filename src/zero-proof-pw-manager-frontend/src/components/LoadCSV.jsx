@@ -1,7 +1,7 @@
 // components/LoadCSV.jsx
 import React, { useState } from "react";
 
-export default function LoadCSV({ onImportEntry }) {
+export default function LoadCSV({ onImportEntries, onImportEntry }) {
   const [file, setFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
@@ -58,18 +58,20 @@ export default function LoadCSV({ onImportEntry }) {
       const csvText = await file.text();
       const entries = parseCSV(csvText);
       
-      setProgress({ current: 0, total: entries.length });
-      
-      for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i];
-        setProgress({ current: i + 1, total: entries.length });
+      // setProgress({ current: 0, total: entries.length });
+      const resultImport = await onImportEntries(entries);
+
+      // For future one off import
+      // for (let i = 0; i < entries.length; i++) {
+      //   const entry = entries[i];
+      //   setProgress({ current: i + 1, total: entries.length });
         
-        // Call the handleAdd function from ManageVault for each entry
-        await onImportEntry(entry);
+      //   // Call the handleAdd function from ManageVault for each entry
+      //   await onImportEntry(entry);
         
-        // Small delay to show progress
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
+      //   // Small delay to show progress
+      //   await new Promise(resolve => setTimeout(resolve, 100));
+      // }
       
       alert(`Successfully imported ${entries.length} entries!`);
       setFile(null);

@@ -91,7 +91,7 @@ export default function ManageVault() {
     if (!window.confirm("Are you sure you want to clear all entries? This action cannot be undone.")) {
       return;
     }
-    
+
     setClearingVault(true);
     try {
       const result = await zero_proof_pw_manager_backend.dropStorage();
@@ -141,6 +141,26 @@ export default function ManageVault() {
     }
   };
 
+  const handleAllEntries = async (entries) => {
+    const encryptedBlobArray = [];
+    const forBlobsUpdate = [];
+    try {
+      for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i];
+        const encryptedBlob = await encryptMetaBlob(entry.url, entry.username, signedKey);
+        const encryptedPW = await encryptPasswordBlob(entry.password, signedKey);
+        encryptedBlobArray.push({ metadata: encryptedBlob, blob: encryptedPW });
+        forBlobsUpdate.push({blob: encryptedBlob, url: entry.url, username: entry.username});
+      }
+      await zero_proof_pw_manager_backend.addEntriesFromArray(encryptedBlobArray);
+      setBlobs((prev) => [...prev, ...forBlobsUpdate]);
+    } catch (error) {
+      console.error("Error importing entrys:", error);
+      return false;
+    }
+    return true;
+  };
+
   const filteredBlobs = blobs.filter(({ url, username }) => {
     const searchLower = searchTerm.toLowerCase();
     return (
@@ -166,8 +186,8 @@ export default function ManageVault() {
       <div className="card">
         <div className="flex-between mb-30">
           <h1>🔐 Password Vault</h1>
-          <button 
-            className="btn btn-secondary" 
+          <button
+            className="btn btn-secondary"
             onClick={() => navigate("/")}
           >
             ← Back to Home
@@ -180,34 +200,34 @@ export default function ManageVault() {
             <h3>➕ Add New Entry</h3>
             <div className="form-group">
               <label className="form-label">Website URL</label>
-              <input 
-                className="form-input" 
-                placeholder="https://example.com" 
-                value={newEntry.url} 
-                onChange={(e) => setNewEntry({ ...newEntry, url: e.target.value })} 
+              <input
+                className="form-input"
+                placeholder="https://example.com"
+                value={newEntry.url}
+                onChange={(e) => setNewEntry({ ...newEntry, url: e.target.value })}
               />
             </div>
             <div className="form-group">
               <label className="form-label">Username</label>
-              <input 
-                className="form-input" 
-                placeholder="your@email.com" 
-                value={newEntry.username} 
-                onChange={(e) => setNewEntry({ ...newEntry, username: e.target.value })} 
+              <input
+                className="form-input"
+                placeholder="your@email.com"
+                value={newEntry.username}
+                onChange={(e) => setNewEntry({ ...newEntry, username: e.target.value })}
               />
             </div>
             <div className="form-group">
               <label className="form-label">Password</label>
-              <input 
-                className="form-input" 
-                type="password" 
-                placeholder="Enter password" 
-                value={newEntry.password} 
-                onChange={(e) => setNewEntry({ ...newEntry, password: e.target.value })} 
+              <input
+                className="form-input"
+                type="password"
+                placeholder="Enter password"
+                value={newEntry.password}
+                onChange={(e) => setNewEntry({ ...newEntry, password: e.target.value })}
               />
             </div>
-            <button 
-              className="btn" 
+            <button
+              className="btn"
               onClick={handleAdd}
               disabled={addingEntry}
             >
@@ -228,7 +248,7 @@ export default function ManageVault() {
             <p className="mb-20">
               Import your passwords from a CSV file
             </p>
-            <LoadCSV onImportEntry={handleImportEntry} />
+            <LoadCSV onImportEntries={handleAllEntries} onImportEntry={handleImportEntry} />
           </div>
         </div>
 
@@ -237,8 +257,8 @@ export default function ManageVault() {
           <div className="flex-between mb-20">
             <h3>🔒 Your Passwords ({blobs.length})</h3>
             {blobs.length > 0 && (
-              <button 
-                className="btn btn-secondary" 
+              <button
+                className="btn btn-secondary"
                 onClick={dropAll}
                 disabled={clearingVault}
               >
@@ -258,11 +278,11 @@ export default function ManageVault() {
           {blobs.length > 0 && (
             <div className="form-group mb-20">
               <label className="form-label">🔍 Search Passwords</label>
-              <input 
-                className="form-input" 
-                placeholder="Search by website URL or username..." 
-                value={searchTerm} 
-                onChange={(e) => setSearchTerm(e.target.value)} 
+              <input
+                className="form-input"
+                placeholder="Search by website URL or username..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               {searchTerm && (
                 <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '5px' }}>
@@ -280,8 +300,8 @@ export default function ManageVault() {
           ) : filteredBlobs.length === 0 && searchTerm ? (
             <div className="text-center">
               <p>No entries match your search: "{searchTerm}"</p>
-              <button 
-                className="btn btn-secondary" 
+              <button
+                className="btn btn-secondary"
                 onClick={() => setSearchTerm('')}
                 style={{ marginTop: '10px' }}
               >
@@ -294,8 +314,8 @@ export default function ManageVault() {
                 <div key={blob} className="card" style={{ padding: '20px' }}>
                   <div className="flex-between mb-10">
                     <h4 style={{ margin: 0 }}>🌐 {url}</h4>
-                    <button 
-                      className="btn btn-secondary" 
+                    <button
+                      className="btn btn-secondary"
                       style={{ padding: '8px 12px', fontSize: '12px' }}
                       onClick={() => deleteEntry(blob)}
                       disabled={deletingEntry === blob}
@@ -311,15 +331,15 @@ export default function ManageVault() {
                   <div className="form-group">
                     <label className="form-label">🔑 Password</label>
                     <div className="flex gap-10">
-                      <input 
-                        className="form-input" 
-                        type={passwords[blob] ? "text" : "password"} 
-                        value={passwords[blob] || ''} 
-                        readOnly 
+                      <input
+                        className="form-input"
+                        type={passwords[blob] ? "text" : "password"}
+                        value={passwords[blob] || ''}
+                        readOnly
                         placeholder="Click 'Show' to reveal"
                       />
-                      <button 
-                        className="btn" 
+                      <button
+                        className="btn"
                         style={{ padding: '12px 16px', minWidth: 'auto' }}
                         onClick={() => passwords[blob] ? hidePassword(blob) : revealPassword(blob)}
                         disabled={revealingPassword === blob}

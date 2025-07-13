@@ -11,9 +11,14 @@ actor {
     return "Hello, " # name # "!";
   };
 
-  // Add or update an entry
   public func addEntry(encryptedBlob: Text.Text, encryptedPWBlob: Text.Text) : async () {
     vaultMap.put(encryptedBlob, encryptedPWBlob)
+  };
+
+  public func addEntriesFromArray(entries: [{ metadata: Text.Text; blob: Text.Text }]) : async () {
+    for (entry in entries.vals()) {
+      vaultMap.put(entry.metadata, entry.blob);
+    };
   };
 
   public query func getPWEntryByBlob(encryptedBlob: Text.Text) : async ?Text.Text {
