@@ -246,7 +246,10 @@ export default function ManageVault() {
                         setNewEntry({ ...newEntry, password: randomPassword });
                       }}
                       >
-                      🎲 Generate
+                      <div className="flex gap-5 flex-column" style={{ alignItems: 'center' }}>
+                        <span role="img" aria-label="dice">🎲</span>
+                        Generate
+                      </div>
                       </button>
                     </div>
                     </div>
