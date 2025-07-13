@@ -2,24 +2,36 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zero_proof_pw_manager_backend } from "../../../declarations/zero-proof-pw-manager-backend";
-import { deriveVaultKey, encryptMetaBlob, encryptPasswordBlob } from "../utility/encdcrpt";
+import { decryptMetaBlob, decryptPasswordBlob, deriveVaultKey, encryptMetaBlob, encryptPasswordBlob } from "../utility/encdcrpt";
 
 export default function ManageVault() {
   const [loading, setLoading] = useState(true);
-  const [signedKey, setKey] = useState(null);
+  const [signedKey, setKey] = useState('');
   const [blobs, setBlobs] = useState([]);
   const [passwords, setPasswords] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkWallet = async () => {
-      if (window.solana?.isConnected && window.solana.publicKey) {
+      if (window.solana?.isPhantom) {
         const newKey = await deriveVaultKey();
         setKey(newKey);
         const users = await zero_proof_pw_manager_backend.getAllUsers();
-        setBlobs(users);
+        const decoded = await Promise.all(
+          users.map(async (blob) => {
+            try {
+              const { url, username } = await decryptMetaBlob(blob, newKey);
+              return { blob, url, username };
+            } catch (e) {
+              console.log("error", e);
+              return { blob, url: "❌ Decryption Error", username: "❌" };
+            }
+          })
+        );
+        setBlobs(decoded);
       } else {
         navigate("/");
+        setKey("");
       }
       setLoading(false);
     };
@@ -28,12 +40,15 @@ export default function ManageVault() {
 
   const revealPassword = async (blob) => {
     const pw = await zero_proof_pw_manager_backend.getPWEntryByBlob(blob);
-    setPasswords((prev) => ({ ...prev, [blob]: pw }));
+    const decryptedPass = await decryptPasswordBlob(pw, signedKey);
+    setPasswords((prev) => ({ ...prev, [blob]: decryptedPass }));
   };
 
   const deleteEntry = async (blob) => {
-    await zero_proof_pw_manager_backend.deleteEntryByBlob(blob);
-    setBlobs((prev) => prev.filter((b) => b !== blob));
+    const result = await zero_proof_pw_manager_backend.deleteEntryByBlob(blob);
+    console.log("delete result", result);
+    blobs.filter((v) => v !== blob);
+    setBlobs(blobs);
   };
 
   const [newEntry, setNewEntry] = useState({ url: "", username: "", password: "" });
@@ -45,7 +60,7 @@ export default function ManageVault() {
     console.log("encryptedBlob", typeof encryptedBlob, encryptedBlob);
     console.log("encryptedPW", typeof encryptedPW, encryptedPW);
     await zero_proof_pw_manager_backend.addEntry(encryptedBlob, encryptedPW);
-    setBlobs((prev) => [...prev, encryptedBlob]);
+    setBlobs((prev) => [...prev, { blob: encryptedBlob, url: newEntry.url, username: newEntry.username }]);
     setNewEntry({ url: "", username: "", password: "" });
   };
 
@@ -74,9 +89,10 @@ export default function ManageVault() {
               </tr>
             </thead>
             <tbody>
-              {blobs.map((blob) => (
+              {blobs.map(({ blob, url, username }) => (
                 <tr key={blob}>
-                  <td>{blob}</td>
+                  <td>{url}</td>
+                  <td>{username}</td>
                   <td>{passwords[blob] ?? <button onClick={() => revealPassword(blob)}>Show</button>}</td>
                   <td>
                     <button onClick={() => deleteEntry(blob)}>Delete</button>

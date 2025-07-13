@@ -25,8 +25,8 @@ actor {
     return Iter.toArray(iter);
   };
 
-  public func deleteEntryByBlob(encryptedBlob: Text.Text) : async () {
-    ignore vaultMap.remove(encryptedBlob);
+  public func deleteEntryByBlob(encryptedBlob: Text.Text) : async ?Text.Text {
+    return vaultMap.remove(encryptedBlob);
   };
 
   public func dropStorage() : async () {
