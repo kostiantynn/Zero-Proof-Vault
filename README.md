@@ -1,59 +1,207 @@
-# `zero-proof-pw-manager`
+# 🔐 Zero-Proof Password Manager
 
-Welcome to your new `zero-proof-pw-manager` project and to the Internet Computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
+A secure, decentralized password manager built on the Internet Computer with zero-knowledge cryptography and Phantom Wallet integration.
 
-To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
+## ✨ Features
 
-To learn more before you start working with `zero-proof-pw-manager`, see the following documentation available online:
+- 🔐 **Zero-Knowledge Encryption**: Your passwords are encrypted client-side before being stored
+- 🌐 **Decentralized Storage**: Built on the Internet Computer blockchain
+- 👛 **Phantom Wallet Integration**: Secure authentication with Solana wallet
+- 📁 **CSV Import**: Import passwords from existing CSV files
+- 🎨 **Modern UI**: Beautiful blockchain-themed interface
+- 🔒 **Client-Side Encryption**: Your data never leaves your device unencrypted
 
-- [Quick Start](https://internetcomputer.org/docs/current/developer-docs/setup/deploy-locally)
-- [SDK Developer Tools](https://internetcomputer.org/docs/current/developer-docs/setup/install)
-- [Motoko Programming Language Guide](https://internetcomputer.org/docs/current/motoko/main/motoko)
-- [Motoko Language Quick Reference](https://internetcomputer.org/docs/current/motoko/main/language-manual)
+## 🚀 Quick Start
 
-If you want to start working on your project right away, you might want to try the following commands:
+### Prerequisites
 
-```bash
-cd zero-proof-pw-manager/
-dfx help
-dfx canister --help
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [DFX](https://internetcomputer.org/docs/current/developer-docs/setup/install/) (Internet Computer SDK)
+- [Phantom Wallet](https://phantom.app/) browser extension
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd zero-proof-pw-manager
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development environment**
+
+   **Terminal 1 - Start DFX (Internet Computer)**
+   ```bash
+   dfx start --clean --background
+   ```
+
+   **Terminal 2 - Deploy the backend**
+   ```bash
+   dfx deploy
+   ```
+
+   **Terminal 3 - Start the frontend**
+   ```bash
+   cd src/zero-proof-pw-manager-frontend
+   npm run dev
+   ```
+
+4. **Open your browser**
+   - Navigate to `http://localhost:3000`
+   - Connect your Phantom Wallet
+   - Start managing your passwords securely!
+
+## 🛠️ Development
+
+### Project Structure
+
+```
+zero-proof-pw-manager/
+├── src/
+│   ├── zero-proof-pw-manager-backend/    # Internet Computer backend (Motoko)
+│   └── zero-proof-pw-manager-frontend/   # React frontend
+├── dfx.json                              # DFX configuration
+└── package.json                          # Root package configuration
 ```
 
-## Running the project locally
+### Available Scripts
 
-If you want to test your project locally, you can use the following commands:
+**Root directory:**
+- `npm install` - Install all dependencies
+- `npm run build` - Build all packages
+- `npm start` - Start the frontend development server
 
+**Frontend directory (`src/zero-proof-pw-manager-frontend/`):**
+- `npm run dev` - Start development server on port 3000
+- `npm run build` - Build for production
+- `npm run setup` - Setup and deploy to Internet Computer
+
+**DFX commands:**
+- `dfx start` - Start local Internet Computer replica
+- `dfx deploy` - Deploy canisters to local network
+- `dfx deploy --network ic` - Deploy to mainnet
+
+### Technology Stack
+
+- **Frontend**: React 18, Vite, TypeScript, SCSS
+- **Backend**: Motoko (Internet Computer)
+- **Wallet**: Phantom Wallet (Solana)
+- **Encryption**: Client-side AES encryption
+- **Styling**: Modern CSS with blockchain theme
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Internet Computer Network (local or ic)
+DFX_NETWORK=local
+
+# Frontend port
+VITE_PORT=3000
+```
+
+### DFX Configuration
+
+The `dfx.json` file configures the Internet Computer canisters:
+
+```json
+{
+  "canisters": {
+    "zero-proof-pw-manager-backend": {
+      "main": "src/zero-proof-pw-manager-backend/main.mo",
+      "type": "motoko"
+    },
+    "zero-proof-pw-manager-frontend": {
+      "dependencies": ["zero-proof-pw-manager-backend"],
+      "source": ["src/zero-proof-pw-manager-frontend/dist"],
+      "type": "assets"
+    }
+  }
+}
+```
+
+## 🎨 UI Features
+
+### Modern Design
+- **Blockchain Theme**: Cyberpunk-inspired design with gradients and animations
+- **Responsive Layout**: Works on desktop, tablet, and mobile
+- **Dark Mode**: Easy on the eyes with high contrast
+- **Smooth Animations**: Loading states and transitions
+
+### User Experience
+- **Intuitive Navigation**: Clear paths between wallet connection and password management
+- **Real-time Feedback**: Status indicators and progress bars
+- **Error Handling**: Graceful error messages and recovery
+- **Accessibility**: Keyboard navigation and screen reader support
+
+## 🔐 Security Features
+
+### Zero-Knowledge Architecture
+- **Client-Side Encryption**: All encryption happens in your browser
+- **Vault Key Derivation**: Keys derived from your wallet signature
+- **No Plaintext Storage**: Passwords are never stored unencrypted
+- **Decentralized Storage**: Data stored on Internet Computer blockchain
+
+### Privacy Protection
+- **No Personal Data**: No email, phone, or personal information required
+- **Wallet-Based Identity**: Authentication through your Phantom Wallet
+- **Local Processing**: All sensitive operations happen locally
+- **No Tracking**: No analytics or tracking scripts
+
+## 🚀 Deployment
+
+### Local Development
 ```bash
-# Starts the replica, running in the background
-dfx start --background
+# Terminal 1: Start DFX
+dfx start --clean --background
 
-# Deploys your canisters to the replica and generates your candid interface
+# Terminal 2: Deploy backend
 dfx deploy
+
+# Terminal 3: Start frontend
+cd src/zero-proof-pw-manager-frontend
+npm run dev
 ```
 
-Once the job completes, your application will be available at `http://localhost:4943?canisterId={asset_canister_id}`.
-
-If you have made changes to your backend canister, you can generate a new candid interface with
-
+### Production Deployment
 ```bash
-npm run generate
+# Deploy to Internet Computer mainnet
+dfx deploy --network ic
+
+# Build and deploy frontend
+cd src/zero-proof-pw-manager-frontend
+npm run build
+dfx deploy --network ic
 ```
 
-at any time. This is recommended before starting the frontend development server, and will be run automatically any time you run `dfx deploy`.
+## 🤝 Contributing
 
-If you are making frontend changes, you can start a development server with
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-```bash
-npm start
-```
+## 📄 License
 
-Which will start a server at `http://localhost:8080`, proxying API requests to the replica at port 4943.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Note on frontend environment variables
+## 🆘 Support
 
-If you are hosting frontend code somewhere without using DFX, you may need to make one of the following adjustments to ensure your project does not fetch the root key in production:
+- **Documentation**: Check the code comments and this README
+- **Issues**: Report bugs on GitHub Issues
+- **Discussions**: Join the community discussions
 
-- set`DFX_NETWORK` to `ic` if you are using Webpack
-- use your own preferred method to replace `process.env.DFX_NETWORK` in the autogenerated declarations
-  - Setting `canisters -> {asset_canister_id} -> declarations -> env_override to a string` in `dfx.json` will replace `process.env.DFX_NETWORK` with the string in the autogenerated declarations
-- Write your own `createActor` constructor
+## 🙏 Acknowledgments
+
+- Internet Computer Foundation for the blockchain infrastructure
+- Phantom Wallet team for the wallet integration
+- React and Vite teams for the excellent development tools
+- The open-source community for inspiration and libraries

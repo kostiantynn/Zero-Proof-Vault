@@ -92,38 +92,38 @@ export default function LoadCSV({ onImportEntry }) {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 1000
+        zIndex: 1000,
+        backdropFilter: 'blur(10px)'
       }}>
-        <div style={{
-          backgroundColor: 'white',
-          padding: '32px',
-          borderRadius: '8px',
-          textAlign: 'center',
-          minWidth: '300px'
-        }}>
-          <h3>Importing CSV Entries...</h3>
-          <p style={{ fontSize: '24px', margin: '16px 0' }}>
+        <div className="card" style={{ maxWidth: '400px', textAlign: 'center' }}>
+          <h3>📁 Importing CSV Entries...</h3>
+          <div className="mb-20">
+            <div className="loading" style={{ width: '40px', height: '40px', margin: '20px auto' }}></div>
+          </div>
+          <p style={{ fontSize: '24px', margin: '16px 0', color: 'var(--text-primary)' }}>
             {progress.current}/{progress.total}
           </p>
           <div style={{
             width: '100%',
-            height: '20px',
-            backgroundColor: '#f0f0f0',
-            borderRadius: '10px',
-            overflow: 'hidden'
+            height: '8px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            marginBottom: '10px'
           }}>
             <div style={{
               height: '100%',
-              backgroundColor: '#4CAF50',
+              background: 'var(--cyber-gradient)',
               width: `${(progress.current / progress.total) * 100}%`,
-              transition: 'width 0.3s ease'
+              transition: 'width 0.3s ease',
+              borderRadius: '4px'
             }}></div>
           </div>
-          <p style={{ marginTop: '16px', color: '#666' }}>
+          <p style={{ color: 'var(--text-secondary)' }}>
             Processing entry {progress.current} of {progress.total}...
           </p>
         </div>
@@ -132,39 +132,39 @@ export default function LoadCSV({ onImportEntry }) {
   }
 
   return (
-    <div style={{ marginBottom: 24, padding: 16, border: '1px solid #ddd', borderRadius: 8 }}>
-      <h4>Import from CSV</h4>
-      <p style={{ fontSize: '14px', color: '#666', marginBottom: 16 }}>
+    <div className="form-group">
+      <label className="form-label">📁 Select CSV File</label>
+      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
         CSV should contain columns for URL/Website, Username, and Password
       </p>
       
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+      <div className="flex gap-10" style={{ alignItems: 'center' }}>
         <input
           type="file"
           accept=".csv"
           onChange={handleFileChange}
-          style={{ flex: 1 }}
+          className="form-input"
+          style={{ flex: 1, padding: '8px 12px' }}
         />
         <button 
+          className="btn"
           onClick={handleImport}
           disabled={!file}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: file ? '#4CAF50' : '#ccc',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
+          style={{ 
+            padding: '8px 16px', 
+            minWidth: 'auto',
+            opacity: file ? 1 : 0.5,
             cursor: file ? 'pointer' : 'not-allowed'
           }}
         >
-          Import CSV
+          📥 Import CSV
         </button>
       </div>
       
       {file && (
-        <p style={{ marginTop: 8, fontSize: '14px', color: '#666' }}>
-          Selected: {file.name}
-        </p>
+        <div className="status-message success" style={{ marginTop: '10px' }}>
+          <strong>Selected file:</strong> {file.name}
+        </div>
       )}
     </div>
   );
