@@ -11,6 +11,9 @@ A secure, decentralized password manager built on the Internet Computer with zer
 - 🎨 **Modern UI**: Beautiful blockchain-themed interface
 - 🔒 **Client-Side Encryption**: Your data never leaves your device unencrypted
 
+## Architecture (POC)
+![alt text](image.png)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -189,19 +192,11 @@ dfx deploy --network ic
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🆘 Support
 
 - **Documentation**: Check the code comments and this README
 - **Issues**: Report bugs on GitHub Issues
-- **Discussions**: Join the community discussions
 
 ## 🙏 Acknowledgments
 
 - Internet Computer Foundation for the blockchain infrastructure
-- Phantom Wallet team for the wallet integration
-- React and Vite teams for the excellent development tools
-- The open-source community for inspiration and libraries

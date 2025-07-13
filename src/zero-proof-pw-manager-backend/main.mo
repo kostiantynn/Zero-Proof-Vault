@@ -7,6 +7,7 @@ actor {
 
   var vaultMap = HashMap.HashMap<Text.Text, Text.Text>(10, Text.equal, Text.hash);
 
+  // For the testing of playground
   public query func greet(name : Text.Text) : async Text.Text {
     return "Hello, " # name # "!";
   };
