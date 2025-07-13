@@ -14,5 +14,8 @@
   "type": "module",
   "workspaces": [
     "src/zero-proof-pw-manager-frontend"
-  ]
+  ],
+  "dependencies": {
+    "react-router-dom": "^7.6.3"
+  }
 }
