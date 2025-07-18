@@ -1,6 +1,6 @@
-# 🔐 Zero-Proof Password Manager
+# 🔐 Zero-Proof Vault
 
-A secure, decentralized password manager built on the Internet Computer with zero-knowledge cryptography and Phantom Wallet integration.
+A secure, decentralized Vault built on the Internet Computer with zero-knowledge cryptography and Phantom Wallet integration.
 
 ## ✨ Features
 

@@ -1,7 +1,7 @@
 // pages/ManageVault.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { zero_proof_pw_manager_backend } from "../../../declarations/zero-proof-pw-manager-backend";
+import { zero_proof_vault_backend } from "../../../declarations/zero-proof-vault-backend";
 import { decryptMetaBlob, decryptPasswordBlob, deriveVaultKey, encryptMetaBlob, encryptPasswordBlob } from "../utility/encdcrpt";
 import LoadCSV from "../components/LoadCSV";
 
@@ -23,7 +23,7 @@ export default function ManageVault() {
         try {
           const newKey = await deriveVaultKey();
           setKey(newKey);
-          const users = await zero_proof_pw_manager_backend.getAllUsers();
+          const users = await zero_proof_vault_backend.get_all_users();
           const decoded = await Promise.all(
             users.map(async (blob) => {
               try {
@@ -51,7 +51,7 @@ export default function ManageVault() {
   const revealPassword = async (blob) => {
     setRevealingPassword(blob);
     try {
-      const pw = await zero_proof_pw_manager_backend.getPWEntryByBlob(blob);
+      const pw = await zero_proof_vault_backend.get_pw_entry_by_blob(blob);
       const decryptedPass = await decryptPasswordBlob(pw, signedKey);
       setPasswords((prev) => ({ ...prev, [blob]: decryptedPass }));
     } catch (error) {
@@ -72,7 +72,7 @@ export default function ManageVault() {
   const deleteEntry = async (blob) => {
     setDeletingEntry(blob);
     try {
-      const result = await zero_proof_pw_manager_backend.deleteEntryByBlob(blob);
+      const result = await zero_proof_vault_backend.delete_entry_by_blob(blob);
       console.log("delete result", result);
       setBlobs(prev => prev.filter(item => item.blob !== blob));
       setPasswords(prev => {
@@ -94,7 +94,7 @@ export default function ManageVault() {
 
     setClearingVault(true);
     try {
-      const result = await zero_proof_pw_manager_backend.dropStorage();
+      const result = await zero_proof_vault_backend.drop_storage();
       console.log("drop result", result);
       setBlobs([]);
       setPasswords({});
@@ -117,9 +117,7 @@ export default function ManageVault() {
     try {
       const encryptedBlob = await encryptMetaBlob(newEntry.url, newEntry.username, signedKey);
       const encryptedPW = await encryptPasswordBlob(newEntry.password, signedKey);
-      console.log("encryptedBlob", typeof encryptedBlob, encryptedBlob);
-      console.log("encryptedPW", typeof encryptedPW, encryptedPW);
-      await zero_proof_pw_manager_backend.addEntry(encryptedBlob, encryptedPW);
+      await zero_proof_vault_backend.add_entry(encryptedBlob, encryptedPW);
       setBlobs((prev) => [...prev, { blob: encryptedBlob, url: newEntry.url, username: newEntry.username }]);
       setNewEntry({ url: "", username: "", password: "" });
     } catch (error) {
@@ -134,7 +132,7 @@ export default function ManageVault() {
     try {
       const encryptedBlob = await encryptMetaBlob(entry.url, entry.username, signedKey);
       const encryptedPW = await encryptPasswordBlob(entry.password, signedKey);
-      await zero_proof_pw_manager_backend.addEntry(encryptedBlob, encryptedPW);
+      await zero_proof_vault_backend.add_entry(encryptedBlob, encryptedPW);
       setBlobs((prev) => [...prev, { blob: encryptedBlob, url: entry.url, username: entry.username }]);
     } catch (error) {
       console.error("Error importing entry:", error);
@@ -149,10 +147,11 @@ export default function ManageVault() {
         const entry = entries[i];
         const encryptedBlob = await encryptMetaBlob(entry.url, entry.username, signedKey);
         const encryptedPW = await encryptPasswordBlob(entry.password, signedKey);
-        encryptedBlobArray.push({ metadata: encryptedBlob, blob: encryptedPW });
+        encryptedBlobArray.push({ metadata: encryptedBlob, blobdata: encryptedPW });
         forBlobsUpdate.push({blob: encryptedBlob, url: entry.url, username: entry.username});
       }
-      await zero_proof_pw_manager_backend.addEntriesFromArray(encryptedBlobArray);
+      console.log(encryptedBlobArray);
+      await zero_proof_vault_backend.add_entries_from_array(encryptedBlobArray);
       setBlobs((prev) => [...prev, ...forBlobsUpdate]);
     } catch (error) {
       console.error("Error importing entrys:", error);

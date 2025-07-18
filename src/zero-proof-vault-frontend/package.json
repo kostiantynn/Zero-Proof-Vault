@@ -1,11 +1,10 @@
 {
-  "name": "zero-proof-pw-manager-frontend",
+  "name": "zero-proof-vault-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "setup": "npm i && dfx canister create zero-proof-pw-manager-backend && dfx generate zero-proof-pw-manager-backend && dfx deploy",
-    "dev": "vite --port 3000",
+    "setup": "npm i && dfx canister create zero-proof-vault-backend && dfx generate zero-proof-vault-backend && dfx deploy",
     "start": "vite --port 3000",
     "prebuild": "dfx generate",
     "build": "tsc && vite build",

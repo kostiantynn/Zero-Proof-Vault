@@ -1,18 +1,30 @@
 {
   "canisters": {
-    "zero-proof-pw-manager-backend": {
-      "main": "src/zero-proof-pw-manager-backend/main.mo",
-      "type": "motoko"
+    "internet_identity": {
+      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "frontend": {},
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "type": "custom",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     },
-    "zero-proof-pw-manager-frontend": {
+    "zero-proof-vault-backend": {
+      "candid": "src/zero-proof-vault-backend/zero-proof-vault-backend.did",
+      "package": "zero-proof-vault-backend",
+      "type": "rust"
+    },
+    "zero-proof-vault-frontend": {
       "dependencies": [
-        "zero-proof-pw-manager-backend"
+        "zero-proof-vault-backend"
       ],
       "source": [
-        "src/zero-proof-pw-manager-frontend/dist"
+        "src/zero-proof-vault-frontend/dist"
       ],
       "type": "assets",
-      "workspace": "zero-proof-pw-manager-frontend"
+      "workspace": "zero-proof-vault-frontend"
     }
   },
   "defaults": {

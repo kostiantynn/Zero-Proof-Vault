@@ -3,7 +3,7 @@
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
   },
-  "name": "zero-proof-pw-manager",
+  "name": "zero-proof-vault",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "prebuild": "npm run prebuild --workspaces --if-present",
@@ -13,9 +13,6 @@
   },
   "type": "module",
   "workspaces": [
-    "src/zero-proof-pw-manager-frontend"
-  ],
-  "dependencies": {
-    "react-router-dom": "^7.6.3"
-  }
+    "src/zero-proof-vault-frontend"
+  ]
 }
