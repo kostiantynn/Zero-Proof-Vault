@@ -7,6 +7,7 @@ export default function Home() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('disconnected');
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
   const navigate = useNavigate();
 
   const connectToPhantom = async () => {
@@ -62,45 +63,62 @@ export default function Home() {
     }
   }, []);
 
-  const getStatusMessage = () => {
-    switch (connectionStatus) {
-      case 'connected':
-        return 'Successfully connected to Phantom Wallet!';
-      case 'error':
-        return errorMessage;
-      default:
-        return 'Connect your Phantom Wallet to get started';
+  const templates = [
+    {
+      id: 'secrets',
+      icon: '🔐',
+      title: 'Secrets',
+      description: 'Store passwords, API keys, and sensitive data'
+    },
+    {
+      id: 'files',
+      icon: '📁',
+      title: 'Files',
+      description: 'Secure document storage and sharing'
+    },
+    {
+      id: 'images',
+      icon: '🖼️',
+      title: 'Images',
+      description: 'Private photo and image vault'
+    },
+    {
+      id: 'notes',
+      icon: '📝',
+      title: 'Notes',
+      description: 'Encrypted personal notes and memos'
     }
-  };
+  ];
 
-  const getStatusClass = () => {
-    switch (connectionStatus) {
-      case 'connected':
-        return 'success';
-      case 'error':
-        return 'error';
-      default:
-        return '';
+  const createVault = (template = null) => {
+    if (walletAddress) {
+      navigate("/manage", { state: { template } });
+    } else {
+      // For demo purposes, still allow creating vault without wallet
+      navigate("/manage", { state: { template, localOnly: true } });
     }
   };
 
   return (
-    <div className="flex-center flex-column">
-      <div className="card text-center">
-        <h1>🔐 Zero-Proof Password Manager</h1>
-        <p className="mb-30">
-          Secure your passwords with zero-knowledge cryptography on the Internet Computer
+    <div className="home-container">
+      <div className="hero-section">
+        <h1 className="hero-title">Create a New Vault</h1>
+        <p className="hero-subtitle">
+          Secure your data with zero-knowledge cryptography
         </p>
-
-        {!walletAddress ? (
-          <div className="phantom-wallet-connect">
-            <h2>Connect Your Wallet</h2>
-            <p className="mb-30">
-              Connect your Phantom Wallet to access your secure password vault
-            </p>
-            
+        
+        <div className="main-actions">
+          <button 
+            className="btn btn-primary btn-large create-vault-btn"
+            onClick={() => createVault()}
+          >
+            <span className="btn-icon">🔐</span>
+            Create a New Vault
+          </button>
+          
+          {!walletAddress && (
             <button 
-              className="btn" 
+              className="btn btn-outline connect-wallet-btn" 
               onClick={connectToPhantom}
               disabled={isConnecting}
             >
@@ -111,71 +129,53 @@ export default function Home() {
                 </>
               ) : (
                 <>
-                  <span className="wallet-icon"></span>
-                  Connect Phantom Wallet
+                  <span className="btn-icon">🔗</span>
+                  Connect Wallet to Sync
                 </>
               )}
             </button>
+          )}
+        </div>
 
-            <div className="connection-status">
-              <div className={`status-indicator ${connectionStatus}`}></div>
-              <span>{connectionStatus === 'connected' ? 'Connected' : 'Disconnected'}</span>
-            </div>
-
-            <div className={`status-message ${getStatusClass()}`}>
-              {getStatusMessage()}
-            </div>
-          </div>
-        ) : (
-          <div className="phantom-wallet-connect">
-            <h2>✅ Wallet Connected</h2>
-            <p className="mb-20">
-              Your Phantom Wallet is successfully connected
-            </p>
-            
-            <div className="status-message success mb-30">
-              <strong>Connected Address:</strong><br />
-              <code style={{ fontSize: '12px', wordBreak: 'break-all' }}>
-                {walletAddress}
-              </code>
-            </div>
-
-            <div className="flex-center gap-20">
-              <button 
-                className="btn" 
-                onClick={() => navigate("/manage")}
+        <div className="templates-section">
+          <h3 className="templates-title">Quick-start templates</h3>
+          <div className="templates-grid">
+            {templates.map((template) => (
+              <div 
+                key={template.id}
+                className={`template-card ${selectedTemplate === template.id ? 'selected' : ''}`}
+                onClick={() => {
+                  setSelectedTemplate(template.id);
+                  setTimeout(() => createVault(template), 200);
+                }}
               >
-                🔐 Manage Passwords
-              </button>
-              
-              <button 
-                className="btn btn-secondary" 
-                onClick={disconnectWallet}
-              >
-                Disconnect Wallet
-              </button>
-            </div>
-
-            <div className="connection-status">
-              <div className="status-indicator connected"></div>
-              <span>Connected</span>
-            </div>
+                <div className="template-icon">{template.icon}</div>
+                <h4 className="template-title">{template.title}</h4>
+                <p className="template-description">{template.description}</p>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
       </div>
 
+      {connectionStatus === 'error' && (
+        <div className="error-message">
+          {errorMessage}
+        </div>
+      )}
+
       {walletAddress && (
-        <div className="card mt-30" style={{ maxWidth: '800px' }}>
-          <h3>🚀 Ready to Get Started?</h3>
-          <p>
-            Your wallet is connected and ready. You can now:
-          </p>
-          <ul style={{ textAlign: 'left', marginTop: '20px' }}>
-            <li>🔐 Store passwords securely with zero-knowledge proofs</li>
-            <li>🔒 Access your vault from anywhere</li>
-            <li>🛡️ Benefit from blockchain-level security</li>
-            <li>⚡ Fast and decentralized password management</li>
-          </ul>
+        <div className="wallet-info">
+          <div className="wallet-status">
+            <span className="status-indicator connected"></span>
+            <span>Wallet Connected</span>
+          </div>
+          <button 
+            className="btn btn-text disconnect-btn" 
+            onClick={disconnectWallet}
+          >
+            Disconnect
+          </button>
         </div>
       )}
     </div>

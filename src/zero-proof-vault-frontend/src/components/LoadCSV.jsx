@@ -1,7 +1,7 @@
 // components/LoadCSV.jsx
 import React, { useState } from "react";
 
-export default function LoadCSV({ onImportEntries, onImportEntry }) {
+export default function LoadCSV({ signedKey, setBlobs, handleImportEntry, handleAllEntries }) {
   const [file, setFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
@@ -58,22 +58,29 @@ export default function LoadCSV({ onImportEntries, onImportEntry }) {
       const csvText = await file.text();
       const entries = parseCSV(csvText);
       
-      // setProgress({ current: 0, total: entries.length });
-      const resultImport = await onImportEntries(entries);
-
-      // For future one off import
-      // for (let i = 0; i < entries.length; i++) {
-      //   const entry = entries[i];
-      //   setProgress({ current: i + 1, total: entries.length });
-        
-      //   // Call the handleAdd function from ManageVault for each entry
-      //   await onImportEntry(entry);
-        
-      //   // Small delay to show progress
-      //   await new Promise(resolve => setTimeout(resolve, 100));
-      // }
+      setProgress({ current: 0, total: entries.length });
       
-      alert(`Successfully imported ${entries.length} entries!`);
+      if (handleAllEntries) {
+        const resultImport = await handleAllEntries(entries);
+        if (resultImport) {
+          alert(`Successfully imported ${entries.length} entries!`);
+        } else {
+          throw new Error("Failed to import entries");
+        }
+      } else if (handleImportEntry) {
+        // Fallback to single entry import
+        for (let i = 0; i < entries.length; i++) {
+          const entry = entries[i];
+          setProgress({ current: i + 1, total: entries.length });
+          
+          await handleImportEntry(entry);
+          
+          // Small delay to show progress
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        alert(`Successfully imported ${entries.length} entries!`);
+      }
+      
       setFile(null);
       
     } catch (error) {
@@ -134,44 +141,30 @@ export default function LoadCSV({ onImportEntries, onImportEntry }) {
   }
 
   return (
-    <div className="form-group">
-      <label className="form-label">📁 Select CSV File</label>
-      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-        CSV should contain columns for URL/Website, Username, and Password
-      </p>
-      
-      <div className="flex gap-10" style={{ alignItems: 'center' }}>
-        <input
-          type="file"
-          accept=".csv"
-          onChange={handleFileChange}
-          className="form-input"
-          style={{ flex: 1, padding: '8px 12px' }}
-        />
-        <button 
-          className="btn"
-          onClick={handleImport}
-          disabled={!file}
-          style={{ 
-            padding: '12px 16px', 
-            minWidth: 'auto',
-            opacity: file ? 1 : 0.5,
-            cursor: file ? 'pointer' : 'not-allowed',
-            background: file ? 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)' : 'rgba(0, 242, 254, 0.1)',
-            color: file ? 'var(--darker-bg)' : 'var(--text-secondary)',
-            border: file ? 'none' : '1px solid rgba(0, 242, 254, 0.3)',
-            boxShadow: file ? '0 4px 15px rgba(0, 242, 254, 0.3)' : 'none'
-          }}
-        >
-          📥 Import CSV
-        </button>
-      </div>
-      
-      {file && (
-        <div className="status-message success" style={{ marginTop: '10px' }}>
-          <strong>Selected file:</strong> {file.name}
-        </div>
-      )}
-    </div>
+    <button 
+      className="sidebar-action-btn"
+      onClick={() => {
+        // Create file input element and trigger click
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.csv';
+        input.onchange = (e) => {
+          const selectedFile = e.target.files[0];
+          if (selectedFile && selectedFile.type === "text/csv") {
+            setFile(selectedFile);
+            // Auto-import when file is selected
+            setTimeout(() => {
+              handleImport();
+            }, 100);
+          } else {
+            alert("Please select a valid CSV file");
+          }
+        };
+        input.click();
+      }}
+      disabled={isProcessing}
+    >
+      {isProcessing ? '🔄' : '📥'} Import CSV
+    </button>
   );
 }
