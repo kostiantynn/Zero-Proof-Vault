@@ -1,13 +1,15 @@
 // components/LoadCSV.jsx
 import React, { useState } from "react";
 
-export default function LoadCSV({ onImportEntries, onImportEntry }) {
-  const [file, setFile] = useState(null);
+export default function LoadCSV({ onImportEntries, _onImportEntry }:
+   { onImportEntries: (entries: Array<{ url: string; username: string; password: string }>) => Promise<boolean>; // Leave type declaration for later
+   _onImportEntry: (entry: { url: string; username: string; password: string }) => Promise<void>; }) {
+  const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
     if (selectedFile && selectedFile.type === "text/csv") {
       setFile(selectedFile);
     } else {
@@ -15,7 +17,7 @@ export default function LoadCSV({ onImportEntries, onImportEntry }) {
     }
   };
 
-  const parseCSV = (csvText) => {
+  const parseCSV = (csvText: string): Array<{ url: string; username: string; password: string }> => {
     const lines = csvText.split('\n');
     const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
     
@@ -76,7 +78,7 @@ export default function LoadCSV({ onImportEntries, onImportEntry }) {
       alert(`Successfully imported ${entries.length} entries!`);
       setFile(null);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Import error:", error);
       alert("Error importing CSV: " + error.message);
     } finally {

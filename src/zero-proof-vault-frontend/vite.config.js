@@ -39,6 +39,6 @@ export default defineConfig({
         ),
       },
     ],
-    dedupe: ['@dfinity/agent'],
+    dedupe: ['@dfinity/agent', '@dfinity/candid', '@dfinity/principal', '@dfinity/identity'],
   },
 });
