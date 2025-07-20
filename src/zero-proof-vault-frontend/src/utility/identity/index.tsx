@@ -54,6 +54,7 @@ export type IdentityContextType = {
   currentProfile: AuthProfile | null;
   createVault: (nickname: string) => Promise<Vault>;
   switchVault: (vault: Vault) => void;
+  renameVault: (vaultID: string, newName: string) => Vault | undefined;
   listVaults: () => Promise<Vault[]>;
   createProfileFromSeed: (seed: string) => Promise<UserProfile>;
   switchProfile: (profile: UserProfile) => Promise<void>;
@@ -173,6 +174,19 @@ export function IdentitySystemProvider({ children }: { children: ReactNode }) {
     return newVault;
   };
 
+  const renameVault = (vaultID: string, newName: string) => {
+    if (!db.current) throw new Error("DB not initialized");
+    if (!currentProfile) throw new Error("No profile set");
+    const tx = db.current.transaction(VAULTS_STORE, "readwrite");
+    const store = tx.objectStore(VAULTS_STORE);
+    const vault = store.get(vaultID) as unknown as Vault | undefined;
+    if (vault) {
+      vault.nickname = newName;
+      store.put(vault);
+    }
+    return vault;
+  }
+
   const switchVault = (vault: Vault) => {
     setCurrentVault(vault);
     localStorage.setItem(LOCAL_STORAGE_ORGANIZATION_VAULT_ID, vault.vaultID);
@@ -193,6 +207,7 @@ export function IdentitySystemProvider({ children }: { children: ReactNode }) {
     currentProfile,
     createVault,
     switchVault,
+    renameVault,
     listVaults,
     createProfileFromSeed,
     switchProfile,
