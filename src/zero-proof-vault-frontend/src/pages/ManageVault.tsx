@@ -1,5 +1,5 @@
 // ManageVault.tsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useIdentitySystem } from "../utility/identity";
 import { zero_proof_vault_backend } from "../../../declarations/zero-proof-vault-backend";

@@ -4,37 +4,6 @@
 html {
   scroll-behavior: smooth;
 }
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--darker-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--cyber-gradient);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-/* Selection styles */
-::selection {
-  background: rgba(0, 242, 254, 0.3);
-  color: var(--text-primary);
-}
-
-/* Focus styles for accessibility */
-*:focus {
-  outline: 2px solid var(--cyber-gradient);
-  outline-offset: 2px;
-}
-
 /* Loading animation */
 @keyframes spin {
   0% { transform: rotate(0deg); }

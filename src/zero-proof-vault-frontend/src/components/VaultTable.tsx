@@ -124,8 +124,8 @@ export default function VaultTable({ blobs, setBlobs }: VaultTableProps) {
 
                             </th>
                         ))}
-                        <th style={{ width: "40px" }}>
-                            <span className="add-column-btn" onClick={handleAddColumn}>➕</span>
+                        <th className="add-column-btn">
+                            <span className="add-column-btn-span" onClick={handleAddColumn}>+</span>
                         </th>
                     </tr>
                 </thead>
@@ -136,14 +136,11 @@ export default function VaultTable({ blobs, setBlobs }: VaultTableProps) {
 
                         return (
                             <tr key={rowIndex} className={isExtra ? "extra-row" : ""}>
-                                <td className="row-control">
+                                <td className="row-control" onClick={() => !isExtra ? handleDeleteRow(rowIndex) : null}>
                                     {!isExtra && (
                                         <span
                                             className="remove-row"
-                                            onClick={() => handleDeleteRow(rowIndex)}
-                                        >
-                                            ➖
-                                        </span>
+                                        >─</span>
                                     )}
                                 </td>
                                 {columns.map((col, colIndex) => (
